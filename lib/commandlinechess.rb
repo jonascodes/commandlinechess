@@ -35,12 +35,11 @@ class Chessgame
     #takes a color, and start position and a target position and makes a move
     #requires pre-validation of valid moves.
     def make_move!(board, color, start, target)
-        
+
         start_piece = board[start].piece
 
         #if move is a castling
-        if start_piece.name == "King" && ((color == 1 && start_piece.position = [4,1] && (target == [2,1] || target == [6,1])) || (color == -1 && start_piece.position == [4,8] && (target = [2,8] || target == [6,8])))
-
+        if start_piece.name == "King" && ((color == 1 && start_piece.position == [4,1] && (target == [2,1] || target == [6,1])) || (color == -1 && start_piece.position == [4,8] && (target == [2,8] || target == [6,8])))
             king = board[start].piece
             rook_start = [1,1] if target == [2,1]
             rook_start = [1,8] if target == [6,1]
@@ -117,7 +116,7 @@ class Chessgame
     end
 
     def draw_board!(board)
-        #system ("clear")
+        system ("clear")
         in_check = in_check(board) # will show if a player is putting check on the other
         puts ""
         puts "CommandLine Chess v0.1 by Jonas - Turn #0"
@@ -297,7 +296,6 @@ class Chessgame
     #returns the color of the player that is checkmate. Zero if none is checkmate
     def checkmate(board)
         check_color = in_check(board)
-        puts check_color
         if check_color == 0
             return 0
         else
@@ -306,13 +304,17 @@ class Chessgame
             checkmate = check_color
             pieces = all_pieces(board, check_color)
             pieces.each do |piece|
-                moves = all_moves(piece)
+                moves = all_moves(piece) #contains walks and hits
+                #check if a walk or a hit would uncheck the king
                 piece.walk.each do |move|
-                    if valid_move?(board, check_color, piece.position, move)
-                        new_board = deep_copy(board)
-                        make_move!(new_board,check_color,piece.position,add_positions(piece.position,move))
-                        if in_check(new_board) != color
-                            checkmate = 0
+                    target = add_positions(piece.position,move)
+                    if !out_of_board?(target)
+                        if valid_move?(board, check_color, piece.position, target)
+                            new_board = deep_copy(board)
+                            make_move!(new_board,check_color,piece.position,target)
+                            if in_check(new_board) != check_color
+                                checkmate = 0
+                            end
                         end
                     end
                 end
@@ -322,26 +324,19 @@ class Chessgame
     end
 
     #checks if the tartget field is allowed. Sets error message if not
-    def valid_move?(board, color, start, input_target)
+    def valid_move?(board, color, start, target)
         
-        #syntax has to be correct 
-        if !valid_syntax?(input_target)
-            @error_message = input_target.to_s + " is not a valid field. Please choose a valid move."
-            return false
-        end
-
         #get the piece of the start field
         start_field = board[start]
         start_piece = start_field.piece
 
         #get the target field for user_input
-        target = translate_to_coordinate(input_target)
         target_field = board[target]
         target_piece = target_field.piece
 
         #target_field cannot have a piece of the player's color
         if piece_color_on_field(target_field) == color
-            @error_message = "There is alredy one of your pieces on " + input_target.to_s + ". Please choose a valid move."
+            @error_message = "There is alredy one of your pieces on #{translate_to_user_input(target)}. Please choose a valid move."
             return false
         end
 
@@ -358,8 +353,8 @@ class Chessgame
         #special case 2: Rochade. Can only be done by king and only in special conditions
 
         castling = false
-        if start_piece.name == "King" && ((color == 1 && start_piece.position == [4,1] && (target == [2,1] || target == [6,1])) || (color == -1 && start_piece.position == [4,8] && (target == [2,8] || target == [6,8])))
-            
+        if start_piece.name == "King" && ((color == 1 && start_piece.position == [4,1] && (target == [2,1] || target == [6,1])) || (color == -1 && start_piece.position == [4,8] && (target == [2,8] || target == [6,8])))        
+
             castling = true
             #Conditions that castling is permitted
             #1. King may not have moved yet
@@ -408,7 +403,6 @@ class Chessgame
                     return false                      
                 end
             end
-            
         end    
 
         if !castling
@@ -432,12 +426,11 @@ class Chessgame
                 end
             end
         end
-
         #check if the king is in check. If so, the move MUST uncheck the king
         if in_check(board) == color
             new_board = deep_copy(board)
             make_move!(new_board,color,start,target)
-            if in_check(new_board) == color
+            if in_check(new_board) == color 
                 @error_message =  "Invalid move! Your king is still in check!"
                 return false
             end
@@ -447,16 +440,10 @@ class Chessgame
     end
 
     #checks if the start field is allowed. Also puts error message if not
-    def valid_start_field?(board, color, input)
-        
-        #syntax has to be correct 
-        if !valid_syntax?(input)
-            @error_message = input.to_s + " is not a valid field. Please enter a valid field like d5."
-            return false
-        end            
+    def valid_start_field?(board, color, input)        
 
         #get the start field for user_input
-        start_field = board[translate_to_coordinate(input)]
+        start_field = board[input]
         
         #field has to contain a piece of the player's color
         if piece_color_on_field(start_field) != color
@@ -551,16 +538,20 @@ class Chessgame
                 puts "#{color_name(color)}".bold + ", please make your move. Enter the ID of field from where you want to move."
                 print "> "
                 input_start = gets.chomp
-                valid_start = valid_start_field?(@board, color, input_start)
-                start = translate_to_coordinate(input_start)
-
+                if valid_syntax?(input_start)
+                    start = translate_to_coordinate(input_start)
+                    valid_start = valid_start_field?(@board, color, start)
+                end
                 if valid_start
                     @error_message = nil
                     draw_board!(@board)
                     puts "#{color_name(color)}".bold + ", please complete your move. Enter the ID of field to where you want to move from " + "#{input_start}".bold + "."
                     print "> "
                     input_target = gets.chomp
-                    valid_target = valid_move?(@board, color, start, input_target)
+                    if valid_syntax?(input_target)
+                        target = translate_to_coordinate(input_target)
+                        valid_target = valid_move?(@board, color, start, target)
+                    end
                 end
             end
             target = translate_to_coordinate(input_target)
@@ -718,12 +709,12 @@ class Rook < ChessPiece
 end
 
 c = Chessgame.new()
-c.make_move!(c.board,1,[4,2],[4,3])
-c.make_move!(c.board,1,[5,1],[3,3])
-c.make_move!(c.board,1,[3,1],[6,4])
-c.make_move!(c.board,1,[2,1],[1,3])
-c.make_move!(c.board,1,[4,1],[2,1])
-c.new_game!(1)
+#  c.make_move!(c.board,1,[4,2],[4,3])
+#  c.make_move!(c.board,1,[3,1],[6,4])
+#  c.make_move!(c.board,1,[6,4],[3,7])
+# c.make_move!(c.board,1,[2,1],[1,3])
+# c.make_move!(c.board,1,[4,1],[2,1])
+c.new_game!(-1)
 
 # c.make_move!(c.board,-1,[7,8],[6,6])
 # c.make_move!(c.board,-1,[6,6],[4,5])
