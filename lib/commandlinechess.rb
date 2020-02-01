@@ -40,15 +40,16 @@ class Chessgame
 
         #if move is a castling
         if start_piece.name == "King" && ((color == 1 && start_piece.position == [4,1] && (target == [2,1] || target == [6,1])) || (color == -1 && start_piece.position == [4,8] && (target == [2,8] || target == [6,8])))
+
             king = board[start].piece
             rook_start = [1,1] if target == [2,1]
-            rook_start = [1,8] if target == [6,1]
-            rook_start = [8,1] if target == [2,8]
+            rook_start = [8,1] if target == [6,1]
+            rook_start = [1,8] if target == [2,8]
             rook_start = [8,8] if target == [6,8]
             rook_target = [3,1] if target == [2,1]
             rook_target = [5,1] if target == [6,1]
             rook_target = [3,8] if target == [2,8]
-            rook_target = [3,8] if target == [6,8]
+            rook_target = [5,8] if target == [6,8]
             rook = board[rook_start].piece if target == [2,1]
             rook = board[rook_start].piece if target == [6,1]
             rook = board[rook_start].piece if target == [2,8]
@@ -709,9 +710,11 @@ class Rook < ChessPiece
 end
 
 c = Chessgame.new()
-#  c.make_move!(c.board,1,[4,2],[4,3])
-#  c.make_move!(c.board,1,[3,1],[6,4])
-#  c.make_move!(c.board,1,[6,4],[3,7])
+c.make_move!(c.board,-1,[4,7],[4,6])
+c.make_move!(c.board,-1,[2,8],[3,6])
+c.make_move!(c.board,1,[3,8],[5,6])
+#c.make_move!(c.board,1,[4,8],[2,8])
+
 # c.make_move!(c.board,1,[2,1],[1,3])
 # c.make_move!(c.board,1,[4,1],[2,1])
 c.new_game!(-1)
@@ -742,6 +745,8 @@ c.new_game!(-1)
 # - check if the king is in check - OK
 # - in case the king is in check, the next move must uncheck him - OK
 # - check for CHECKMATE - OK
-# - Special Move: Rochade / Castling left/right 
+# - Special Move: Rochade / Castling left/right - OK
 # - Special Move: En Passant 
 # - Add a colored version of a piece to the board after selecting a piece for a move to indicate possible moves...?
+# - bugfix: no error message if first input is invalid
+# - bufgix: black rochade (short) moved white rook up
