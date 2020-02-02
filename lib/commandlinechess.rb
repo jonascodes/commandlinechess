@@ -116,7 +116,7 @@ class Chessgame
         end
     end
 
-    def draw_board!(board)
+    def draw_board!(board, checkmate)
         system ("clear")
         in_check = in_check(board) # will show if a player is putting check on the other
         puts ""
@@ -138,7 +138,7 @@ class Chessgame
                     print show.on_light_black.black
                 end
                 
-                if x == 8 && y == 8 && in_check != 0
+                if x == 8 && y == 8 && in_check != 0 && !checkmate
                     print "  #{color_name(in_check)} is in check!".red
                 end
             end
@@ -248,6 +248,7 @@ class Chessgame
                 y_inc = -1
             end
         end
+
         while ((sx + x_inc) != tx) || ((sy + y_inc) != ty)
             piece = board[[sx + x_inc, sy + y_inc]].piece
             #print "checking [#{sx + x_inc}, #{sy + y_inc}]..."
@@ -260,6 +261,7 @@ class Chessgame
             sx = sx + x_inc
             sy = sy + y_inc
         end
+        
         return blocked
     end
 
@@ -324,6 +326,67 @@ class Chessgame
         return checkmate
     end
 
+    #returns true if the move is an attempt to perform a castling
+    def move_is_castling?(start_piece, target, color)
+        return start_piece.name == "King" && ((color == 1 && start_piece.position == [4,1] && (target == [2,1] || target == [6,1])) || (color == -1 && start_piece.position == [4,8] && (target == [2,8] || target == [6,8])))        
+    end
+
+    #check if an attempted castling meets all requirements
+    def castling_conditions_met?(board, start_piece, target, color)
+        
+        #Conditions that castling is permitted
+        #1. King may not have moved yet
+        if start_piece.moves > 0
+            @error_message =  "Invalid move! Castling not allowed, the King has already moved."
+            return false
+        end
+
+        #2. Involved Rook may not have moved yet, too.
+        castling_rook = board[[1,1]].piece if target == [2,1]
+        castling_rook = board[[1,8]].piece if target == [6,1]
+        castling_rook = board[[8,1]].piece if target == [2,8]
+        castling_rook = board[[8,8]].piece if target == [6,8]
+        if castling_rook == nil
+            @error_message =  "Invalid move! Castling not allowed, the Rook has already moved."
+            return false
+        else
+            if castling_rook.moves > 0
+                @error_message =  "Invalid move! Castling not allowed, the Rook has already moved."
+                return false  
+            end
+        end
+
+        #3. King may not be in check
+        if in_check(board) == color
+            @error_message =  "Invalid move! Castling not allowed, King is in check."
+            return false                  
+        end
+
+        #3. The fields between king and rook may be under threat
+        involved_fields = [[2,1],[3,1]] if target == [2,1]
+        involved_fields = [[5,1],[6,1],[7,1]] if target == [6,1]
+        involved_fields = [[2,8],[3,8],] if target == [2,8]
+        involved_fields = [[5,8],[6,8],[7,8]] if target == [6,8]
+
+        if fields_under_threat_of_capture(board, color*(-1)).include?(involved_fields)
+            @error_message =  "Invalid move! Castling not allowed, fields between King and Rook are under attack."
+            return false  
+        end
+
+        #4. All fields between king and rook must be empty
+        involved_fields.each do |f|
+            field = board[f]
+            if !field_empty?(field)
+                @error_message =  "Invalid move! Castling not allowed, fields between King and Rook not empty."
+                return false                      
+            end
+        end
+
+        #if none of the above checks cause a "return false", return true
+        return true
+
+    end
+
     #checks if the tartget field is allowed. Sets error message if not
     def valid_move?(board, color, start, target)
         
@@ -342,91 +405,52 @@ class Chessgame
         end
 
         #check if all fields between start and target are free
-        if !start_piece.jumps
-            if path_blocked?(board, start, target)
-                @error_message =  "Invalid move! The path from #{translate_to_user_input(start)} to #{translate_to_user_input(target)} is blocked."
-                return false
-            end
-        end
+        #this procedure will crash for invalid moves, like [1,1]->[2,4] (impossible walk). Test validity of move first
+        legal_move = legal_move_target(start_piece, start, target)
+        legal_hit = legal_hit_target(start_piece, start, target)
 
-        #check needed if the piece can move from start to target. 
-        #special case 1: In case of a pawn, walk-moves and hit-moves are different
-        #special case 2: Rochade. Can only be done by king and only in special conditions
-
-        castling = false
-        if start_piece.name == "King" && ((color == 1 && start_piece.position == [4,1] && (target == [2,1] || target == [6,1])) || (color == -1 && start_piece.position == [4,8] && (target == [2,8] || target == [6,8])))        
-
-            castling = true
-            #Conditions that castling is permitted
-            #1. King may not have moved yet
-            if start_piece.moves > 0
-                @error_message =  "Invalid move! Castling not allowed, the King has already moved."
-                return false
-            end
-
-            #2. Involved Rook may not have moved yet, too.
-            castling_rook = board[[1,1]].piece if target == [2,1]
-            castling_rook = board[[1,8]].piece if target == [6,1]
-            castling_rook = board[[8,1]].piece if target == [2,8]
-            castling_rook = board[[8,8]].piece if target == [6,8]
-            if castling_rook == nil
-                @error_message =  "Invalid move! Castling not allowed, the Rook has already moved."
-                return false
-            else
-                if castling_rook.moves > 0
-                    @error_message =  "Invalid move! Castling not allowed, the Rook has already moved."
-                    return false  
-                end
-            end
-
-            #3. King may not be in check
-            if in_check(board) == color
-                @error_message =  "Invalid move! Castling not allowed, King is in check."
-                return false                  
-            end
-
-            #3. The fields between king and rook may be under threat
-            involved_fields = [[2,1],[3,1]] if target == [2,1]
-            involved_fields = [[5,1],[6,1],[7,1]] if target == [6,1]
-            involved_fields = [[2,8],[3,8],] if target == [2,8]
-            involved_fields = [[5,8],[6,8],[7,8]] if target == [6,8]
-
-            if fields_under_threat_of_capture(board, color*(-1)).include?(involved_fields)
-                @error_message =  "Invalid move! Castling not allowed, fields between King and Rook are under attack."
-                return false  
-            end
-
-            #4. All fields between king and rook must be empty
-            involved_fields.each do |f|
-                field = board[f]
-                if !field_empty?(field)
-                    @error_message =  "Invalid move! Castling not allowed, fields between King and Rook not empty."
-                    return false                      
-                end
-            end
-        end    
-
-        if !castling
-            #check if the target field is empty, or if move would be a hit
-            hit = false
-            if !field_empty?(target_field)
-                hit = true
-                #special case for pawns: pawns walk forward but hit left-forward or right-forward 
-                if not legal_hit_target(start_piece, start, target)
-                    @error_message = "Invalid move! A #{start_piece.name} cannot hit that way! Please choose a valid move"
+        if legal_move || legal_hit
+            
+            #move is allowed, but path may not be blocked (except for Knight)
+            if !start_piece.jumps
+                if path_blocked?(board, start, target)
+                    @error_message =  "Invalid move! The path from #{translate_to_user_input(start)} to #{translate_to_user_input(target)} is blocked."
                     return false
                 end
             end
 
-            #check if the target field is a possible walk-move for the selected piece
-            #check only if it's a walk and not a hit
-            if !hit
-                if not legal_move_target(start_piece, start, target)
+        else
+            #not a legal (regular) move for the piece. Could be a special move like castling or en-passant
+            castling = move_is_castling?(start_piece, target, color)
+            if castling
+                if !castling_conditions_met?(board, start_piece, target, color)
+                    return false
+                end
+            end
+
+            #TO BE IMPLEMENTED
+            # if move_is_en_passant?(start_piece, target, color)
+            #     en_passant = en_passent_conditions_met?(board, start_piece, target, color)
+            # end
+            en_passant = false
+            
+            #not a castling, and neither move or hit are legal moves - define the error message
+            if !castling && !en_passant
+                #check if the target field is empty, or if move would be a hit
+
+                if !field_empty?(target_field)
+                    #special case for pawns: pawns walk forward but hit left-forward or right-forward 
+                    @error_message = "Invalid move! A #{start_piece.name} cannot hit that way! Please choose a valid move"
+                    return false
+  
+                else
                     @error_message =  "Invalid move! A #{start_piece.name} cannot walk that way! Please choose a valid move."
                     return false
                 end
+
             end
         end
+
         #check if the king is in check. If so, the move MUST uncheck the king
         if in_check(board) == color
             new_board = deep_copy(board)
@@ -448,7 +472,7 @@ class Chessgame
         
         #field has to contain a piece of the player's color
         if piece_color_on_field(start_field) != color
-            @error_message = "There is no piece of your's on " + input.to_s + ". Please choose a valid field."
+            @error_message = "There is no piece of your's on " + translate_to_user_input(input).to_s + ". Please choose a valid field."
             return false
         end
         
@@ -535,8 +559,8 @@ class Chessgame
             #exit
 
             while !valid_start || !valid_target
-                draw_board!(@board)
-                puts "#{color_name(color)}".bold + ", please make your move. Enter the ID of field from where you want to move."
+                draw_board!(@board, false)
+                puts "#{color_name(color)}".bold + ", which piece do you want to move? (Enter field ID like 'e5')"
                 print "> "
                 input_start = gets.chomp
                 if valid_syntax?(input_start)
@@ -545,8 +569,8 @@ class Chessgame
                 end
                 if valid_start
                     @error_message = nil
-                    draw_board!(@board)
-                    puts "#{color_name(color)}".bold + ", please complete your move. Enter the ID of field to where you want to move from " + "#{input_start}".bold + "."
+                    draw_board!(@board, false)
+                    puts "#{color_name(color)}".bold + ", where should the " + "#{@board[start].piece.name}".bold + " move to from " + "#{input_start}".bold + "?"
                     print "> "
                     input_target = gets.chomp
                     if valid_syntax?(input_target)
@@ -563,8 +587,8 @@ class Chessgame
             color = color * (-1)
         end
         @error_message = ""
-        draw_board!(@board)
-        puts "#{color_name(color)} is checkmate!".bold + " " + "#{color_name(color * (-1))}".bold + " wins in #{@turns} turns!"
+        draw_board!(@board, true)
+        puts "#{color_name(color)} is checkmate!".bold + " " + "#{color_name(color * (-1))}".bold + " wins in #{@turns/2.to_i} turns!"
 
     end
 
@@ -710,14 +734,16 @@ class Rook < ChessPiece
 end
 
 c = Chessgame.new()
-c.make_move!(c.board,-1,[4,7],[4,6])
-c.make_move!(c.board,-1,[2,8],[3,6])
-c.make_move!(c.board,1,[3,8],[5,6])
+# c.make_move!(c.board,-1,[4,7],[4,6])
+# c.make_move!(c.board,-1,[2,8],[3,6])
+# c.make_move!(c.board,1,[3,8],[5,6])
 #c.make_move!(c.board,1,[4,8],[2,8])
 
 # c.make_move!(c.board,1,[2,1],[1,3])
 # c.make_move!(c.board,1,[4,1],[2,1])
-c.new_game!(-1)
+# c.path_blocked?(c.board, [4,1], [3,2])
+ c.new_game!(1)
+
 
 # c.make_move!(c.board,-1,[7,8],[6,6])
 # c.make_move!(c.board,-1,[6,6],[4,5])
