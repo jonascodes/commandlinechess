@@ -84,6 +84,11 @@ class Chessgame
 
             #step 2: remove the piece from the start field
             board[start].piece = nil
+
+            #extra: if a pawn reaches the end of the field, it becomes a queen.
+            if board[target].piece.name == "Pawn" && ((color == 1 && target[1] == 8) || (color == -1 && target[1] == 1))
+                board[target].piece = Queen.new(target[0], target[1], color)
+            end
         end
 
 
@@ -97,6 +102,7 @@ class Chessgame
     attr_reader :board
     def initialize()
         @turns = 1
+        @last_move = ""
         @board = Hash.new()
         for x in 1..8
             for y in 1..8
@@ -120,8 +126,8 @@ class Chessgame
         system ("clear")
         in_check = in_check(board) # will show if a player is putting check on the other
         puts ""
-        puts "CommandLine Chess v0.1 by Jonas - Turn #0"
-        puts ""
+        puts "CommandLine Chess v0.1 by Jonas - Turn #{(@turns+1)/2.to_i}"
+        puts @last_move
         for y in 1..8
             print " #{9-y} "
             for x in 1..8
@@ -261,7 +267,7 @@ class Chessgame
             sx = sx + x_inc
             sy = sy + y_inc
         end
-        
+
         return blocked
     end
 
@@ -286,6 +292,11 @@ class Chessgame
         return [p1[0]+p2[0], p1[1]+p2[1]]
     end
 
+    #adds the coordinates of two positions
+    def subtract_positions(p1,p2)
+        return [p1[0]-p2[0], p1[1]-p2[1]]
+    end
+
     #returns all possible moves for a piece
     def all_moves(piece)
         moves = []
@@ -294,6 +305,15 @@ class Chessgame
             moves = moves + piece.walk_first
         end
         return moves.uniq!
+    end
+
+    #returns all possible walks for a piece
+    def all_walks(piece)
+        walks = piece.walk
+        if piece.name == "Pawn" && piece.moves == 0
+            walks = walks + piece.walk_first
+        end
+        return walks
     end
 
     #returns the color of the player that is checkmate. Zero if none is checkmate
@@ -307,16 +327,36 @@ class Chessgame
             checkmate = check_color
             pieces = all_pieces(board, check_color)
             pieces.each do |piece|
-                moves = all_moves(piece) #contains walks and hits
-                #check if a walk or a hit would uncheck the king
-                piece.walk.each do |move|
-                    target = add_positions(piece.position,move)
+                walks = all_walks(piece)
+                hits = piece.hit
+                #check if a walk unchecks
+                walks.each do |walk|
+                    target = add_positions(piece.position,walk)
+                    target_field = board[target]
                     if !out_of_board?(target)
-                        if valid_move?(board, check_color, piece.position, target)
-                            new_board = deep_copy(board)
-                            make_move!(new_board,check_color,piece.position,target)
-                            if in_check(new_board) != check_color
-                                checkmate = 0
+                        if field_empty?(target_field)
+                            if valid_move?(board, check_color, piece.position, target) #a valid move means it goes from check to uncheck
+                                new_board = deep_copy(board)
+                                make_move!(new_board,check_color,piece.position,target)
+                                if in_check(new_board) != check_color
+                                    checkmate = 0
+                                end
+                            end
+                        end
+                    end
+                end
+                #check if a hit unchecks
+                hits.each do |hit|
+                    target = add_positions(piece.position,hit)
+                    target_field = board[target]
+                    if !out_of_board?(target)
+                        if !field_empty?(target_field)
+                            if valid_move?(board, check_color, piece.position, target) #a valid move means it goes from check to uncheck
+                                new_board = deep_copy(board)
+                                make_move!(new_board,check_color,piece.position,target)
+                                if in_check(new_board) != check_color
+                                    checkmate = 0
+                                end
                             end
                         end
                     end
@@ -387,6 +427,58 @@ class Chessgame
 
     end
 
+    #selects and executes a move for the color 
+    def make_AI_move!(board, color)
+        #collect all possible moves for color
+        potential_moves = []
+        pieces = all_pieces(board, color)
+        pieces.each do |piece|
+            walks = all_walks(piece)
+            hits = piece.hit
+            #collect all possible walks
+            walks.each do |walk|
+                target = add_positions(piece.position,walk)
+                target_field = board[target]
+                if !out_of_board?(target)
+                    if field_empty?(target_field)
+                        if valid_move?(board, color, piece.position, target) #a valid move means it goes from check to uncheck
+                            new_board = deep_copy(board)
+                            make_move!(new_board,color,piece.position,target)
+                            if in_check(new_board) != color
+                                potential_moves.push([[piece.position], [target]])
+                            end
+                        end
+                    end
+                end
+            end
+            #collect all possible walks
+            hits.each do |hit|
+                target = add_positions(piece.position,hit)
+                target_field = board[target]
+                if !out_of_board?(target)
+                    if !field_empty?(target_field)
+                        if valid_move?(board, color, piece.position, target) #a valid move means it goes from check to uncheck
+                            new_board = deep_copy(board)
+                            make_move!(new_board,color,piece.position,target)
+                            if in_check(new_board) != color
+                                potential_moves.push([[piece.position], [target]])
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        #remove duplicates
+        potential_moves.uniq!
+
+        #select a move from the potential moves (randomly)
+        my_move = potential_moves[rand(potential_moves.count)]
+        my_start = my_move[0][0]
+        my_target = my_move[1][0]
+        make_move!(board,color,my_start,my_target)
+
+    end
+
     #checks if the tartget field is allowed. Sets error message if not
     def valid_move?(board, color, start, target)
         
@@ -429,7 +521,7 @@ class Chessgame
             end
 
             #TO BE IMPLEMENTED
-            # if move_is_en_passant?(start_piece, target, color)
+            # if move_is_en_passant?(board, start_piece, target, color)
             #     en_passant = en_passent_conditions_met?(board, start_piece, target, color)
             # end
             en_passant = false
@@ -456,7 +548,7 @@ class Chessgame
             new_board = deep_copy(board)
             make_move!(new_board,color,start,target)
             if in_check(new_board) == color 
-                @error_message =  "Invalid move! Your king is still in check!"
+                @error_message =  "Invalid move! Your king is in check!"
                 return false
             end
         end
@@ -512,8 +604,9 @@ class Chessgame
     end
 
     #returns all fields threatened by a piece from a given position
-    def threatened_fields(piece, position)
+    def threatened_fields(piece, position, board)
         threatened_fields = []
+        threatened_fields = [0,0] #avoids that the list could ever be empty
         hit = piece.hit
         hit.each do |h|
             target = [position[0] + h[0], position[1] + h[1]]
@@ -540,7 +633,7 @@ class Chessgame
                 piece = board[position].piece
                 if piece != nil
                     if piece.color == color
-                        fields_under_threat = fields_under_threat + threatened_fields(piece, position)
+                        fields_under_threat = fields_under_threat + threatened_fields(piece, position, board)
                     end
                 end
             end
@@ -555,8 +648,6 @@ class Chessgame
             @error_message = nil
             valid_start = false
             valid_target = false
-            #puts fields_under_threat_of_capture(@board, 1).inspect
-            #exit
 
             while !valid_start || !valid_target
                 draw_board!(@board, false)
@@ -580,7 +671,7 @@ class Chessgame
                 end
             end
             target = translate_to_coordinate(input_target)
-            puts "Valid move: #{input_start} -> #{input_target}".green
+            @last_move = "#{color_name(color)}: #{@board[start].piece.name} #{input_start} -> #{input_target}".green
 
             make_move!(@board, color, start, target)
             @turns += 1
@@ -588,7 +679,7 @@ class Chessgame
         end
         @error_message = ""
         draw_board!(@board, true)
-        puts "#{color_name(color)} is checkmate!".bold + " " + "#{color_name(color * (-1))}".bold + " wins in #{@turns/2.to_i} turns!"
+        puts "#{color_name(color)} is checkmate!".bold + " " + "#{color_name(color * (-1))}".bold + " wins in #{(@turns/2).to_i} turns!"
 
     end
 
@@ -734,22 +825,29 @@ class Rook < ChessPiece
 end
 
 c = Chessgame.new()
-# c.make_move!(c.board,-1,[4,7],[4,6])
-# c.make_move!(c.board,-1,[2,8],[3,6])
-# c.make_move!(c.board,1,[3,8],[5,6])
-#c.make_move!(c.board,1,[4,8],[2,8])
+# c.draw_board!(c.board, false)
+# i = -1
+# j = -1
+# while c.checkmate(c.board) == 0
+#     j = j * i
+#     puts j
+#     c.make_AI_move!(c.board, j)
+#     c.draw_board!(c.board, false)
+#     #sleep(0.2)
+# end
+c.new_game!(1)
 
 # c.make_move!(c.board,1,[2,1],[1,3])
 # c.make_move!(c.board,1,[4,1],[2,1])
 # c.path_blocked?(c.board, [4,1], [3,2])
- c.new_game!(1)
+
 
 
 # c.make_move!(c.board,-1,[7,8],[6,6])
 # c.make_move!(c.board,-1,[6,6],[4,5])
 # c.make_move!(c.board,-1,[4,5],[6,4])
 # c.make_move!(c.board,-1,[6,4],[4,3])
-# c.draw_board!(c.board)
+
 
 # c.make_move!(c.board,1,[3,3],[5,4])
 # c.draw_board!(c.board)
