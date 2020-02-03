@@ -475,6 +475,7 @@ class Chessgame
         my_move = potential_moves[rand(potential_moves.count)]
         my_start = my_move[0][0]
         my_target = my_move[1][0]
+        @last_move = "#{color_name(color)}: #{@board[my_start].piece.name} #{translate_to_user_input(my_start)} -> #{translate_to_user_input(my_target)}".green
         make_move!(board,color,my_start,my_target)
 
     end
@@ -642,38 +643,88 @@ class Chessgame
     end
 
 
-    def new_game!(color)
+    def new_game!(color, players, ai_color)
  
         while checkmate(board) == 0
-            @error_message = nil
-            valid_start = false
-            valid_target = false
-
-            while !valid_start || !valid_target
-                draw_board!(@board, false)
-                puts "#{color_name(color)}".bold + ", which piece do you want to move? (Enter field ID like 'e5')"
-                print "> "
-                input_start = gets.chomp
-                if valid_syntax?(input_start)
-                    start = translate_to_coordinate(input_start)
-                    valid_start = valid_start_field?(@board, color, start)
-                end
-                if valid_start
-                    @error_message = nil
+           
+            if players == 2
+                @error_message = nil
+                valid_start = false
+                valid_target = false
+                while !valid_start || !valid_target
                     draw_board!(@board, false)
-                    puts "#{color_name(color)}".bold + ", where should the " + "#{@board[start].piece.name}".bold + " move to from " + "#{input_start}".bold + "?"
+                    puts "#{color_name(color)}".bold + ", which piece do you want to move? (Enter field ID like 'e5')"
                     print "> "
-                    input_target = gets.chomp
-                    if valid_syntax?(input_target)
-                        target = translate_to_coordinate(input_target)
-                        valid_target = valid_move?(@board, color, start, target)
+                    input_start = STDIN.gets.chomp
+                    if valid_syntax?(input_start)
+                        start = translate_to_coordinate(input_start)
+                        valid_start = valid_start_field?(@board, color, start)
+                    end
+                    if valid_start
+                        @error_message = nil
+                        draw_board!(@board, false)
+                        puts "#{color_name(color)}".bold + ", where should the " + "#{@board[start].piece.name}".bold + " move to from " + "#{input_start}".bold + "?"
+                        print "> "
+                        input_target = STDIN.gets.chomp
+                        if valid_syntax?(input_target)
+                            target = translate_to_coordinate(input_target)
+                            valid_target = valid_move?(@board, color, start, target)
+                        end
                     end
                 end
-            end
-            target = translate_to_coordinate(input_target)
-            @last_move = "#{color_name(color)}: #{@board[start].piece.name} #{input_start} -> #{input_target}".green
+                target = translate_to_coordinate(input_target)
+                @last_move = "#{color_name(color)}: #{@board[start].piece.name} #{input_start} -> #{input_target}".green
 
-            make_move!(@board, color, start, target)
+                make_move!(@board, color, start, target)
+
+            elsif players == 0
+
+                make_AI_move!(board, color)
+                @error_message = ""
+                draw_board!(@board, false)
+                print "Player " + "#{color_name(color)}".bold + " has made his move (A.I.). Press <ENTER> to continue"
+                input_start = STDIN.gets.chomp
+
+            elsif players == 1
+
+                if ai_color == -1
+                    @error_message = nil
+                    valid_start = false
+                    valid_target = false
+                    if color == 1
+                        while !valid_start || !valid_target
+                            draw_board!(@board, false)
+                            puts "#{color_name(color)}".bold + ", which piece do you want to move? (Enter field ID like 'e5')"
+                            print "> "
+                            input_start = STDIN.gets.chomp
+                            if valid_syntax?(input_start)
+                                start = translate_to_coordinate(input_start)
+                                valid_start = valid_start_field?(@board, color, start)
+                            end
+                            if valid_start
+                                @error_message = nil
+                                draw_board!(@board, false)
+                                puts "#{color_name(color)}".bold + ", where should the " + "#{@board[start].piece.name}".bold + " move to from " + "#{input_start}".bold + "?"
+                                print "> "
+                                input_target = STDIN.gets.chomp
+                                if valid_syntax?(input_target)
+                                    target = translate_to_coordinate(input_target)
+                                    valid_target = valid_move?(@board, color, start, target)
+                                end
+                            end
+                        end
+                        target = translate_to_coordinate(input_target)
+                        @last_move = "#{color_name(color)}: #{@board[start].piece.name} #{input_start} -> #{input_target}".green
+
+                        make_move!(@board, color, start, target)
+                    else
+                        make_AI_move!(board, color)
+                        @error_message = ""
+                    end
+                else
+                    ##!!!
+                end
+            end
             @turns += 1
             color = color * (-1)
         end
@@ -824,53 +875,39 @@ class Rook < ChessPiece
     end
 end
 
-c = Chessgame.new()
-# c.draw_board!(c.board, false)
-# i = -1
-# j = -1
-# while c.checkmate(c.board) == 0
-#     j = j * i
-#     puts j
-#     c.make_AI_move!(c.board, j)
-#     c.draw_board!(c.board, false)
-#     #sleep(0.2)
-# end
-c.new_game!(1)
+puts "Welcome to " + "CommandLine Chess v0.1".bold + " by Jonas."
+error = false
+if ARGV[0].nil?
+    error = true
+else
+    if ARGV[0] != "0" && ARGV[0] != "1" && ARGV[0] != "2" 
+        error = true
+    end
+end
+if error
+    puts ""
+    puts "usage 'commandlinechess.rb p <c>'" 
+    puts "  "
+    puts "  p   Number of players   0 -> A.I. vs A.I."
+    puts "                          1 -> User vs A.I."
+    puts "                          2 -> User vs User"
+    puts "  "
+    puts "  c   Color of User       w -> User White, A.I. Black (default)"
+    puts "      (optional)          b -> User White, A.I. Black"
+    puts ""
+else
+    players = ARGV[0].to_i 
+    ai_color = -1
+    if ARGV[1] != nil
+        if ARGV[1].to_s.downcase == "b"
+             ai_color = 1
+        end
+    end
 
-# c.make_move!(c.board,1,[2,1],[1,3])
-# c.make_move!(c.board,1,[4,1],[2,1])
-# c.path_blocked?(c.board, [4,1], [3,2])
+    game = Chessgame.new()
+    game.new_game!(1, players, ai_color)
+end
 
-
-
-# c.make_move!(c.board,-1,[7,8],[6,6])
-# c.make_move!(c.board,-1,[6,6],[4,5])
-# c.make_move!(c.board,-1,[4,5],[6,4])
-# c.make_move!(c.board,-1,[6,4],[4,3])
-
-
-# c.make_move!(c.board,1,[3,3],[5,4])
-# c.draw_board!(c.board)
-# c.make_move!(c.board,1,[5,4],[3,6])
-# c.draw_board!(c.board)
-# c.make_move!(c.board,-1,[2,8],[1,6])
-# c.draw_board!(c.board)
-
-
-##c.make_move!(c.board,1,[2,1],[3,3])
-#c.draw_board!(c.board)
-#puts c.fields_under_threat_of_capture(c.board, 1).inspect
-#puts c.get_king_field(c.board, 1).inspect
-#puts c.get_king_field(c.board, -1).inspect
-
-#to-dos
-# - Check that path is free for move of piece that doesnt jump - OK
-# - Check if a field is under attack - OK
-# - check if the king is in check - OK
-# - in case the king is in check, the next move must uncheck him - OK
-# - check for CHECKMATE - OK
-# - Special Move: Rochade / Castling left/right - OK
+# open
 # - Special Move: En Passant 
 # - Add a colored version of a piece to the board after selecting a piece for a move to indicate possible moves...?
-# - bugfix: no error message if first input is invalid
-# - bufgix: black rochade (short) moved white rook up
