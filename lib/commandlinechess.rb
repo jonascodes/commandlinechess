@@ -139,7 +139,27 @@ class Chessgame
         end
     end
 
-    def draw_board!(board, checkmate)
+    def draw_board!(board, checkmate, *start)
+        #show potential moves if start_coordinates have been provided
+        possible_targets = []
+        err_message = @error_message #to preserve original error message 
+        if start.length > 0
+            start_piece = board[start[0]].piece
+            moves = all_moves(start_piece)
+            moves.each do |move|
+                target = add_positions(start_piece.position, move)
+                if !out_of_board?(target)
+                    if valid_move?(board, start_piece.color, start_piece.position, add_positions(start_piece.position, move))
+                        possible_targets.push(target)
+                    end
+                end
+            end
+            
+            
+        end
+        #avoid that error message gets overwritten by the valid_move?
+        @error_message = err_message
+        
         system ("clear")
         in_check = in_check(board) # will show if a player is putting check on the other
         puts ""
@@ -150,15 +170,25 @@ class Chessgame
             for x in 1..8
                 #board coordinates are cartesian, but output is by line, starting with line 8 
                 field = board[[x,9-y]]
+                show_highlighted = false
+                possible_targets.include?([x,9-y]) ? (show_highlighted = true) : (show_highlighted = false)
                 if field.piece == nil
                     show = "   "
                 else                
                     show = " " + field.piece.symbol + " "
                 end
-                if field.color == -1
-                    print show.on_white.black
+                if show_highlighted
+                    if field.color == -1
+                        print show.on_light_magenta.black
+                    else
+                        print show.on_magenta.black
+                    end                   
                 else
-                    print show.on_light_black.black
+                    if field.color == -1
+                        print show.on_white.black
+                    else
+                        print show.on_light_black.black
+                    end
                 end
                 
                 if x == 8 && y == 8 && in_check != 0 && !checkmate
@@ -552,6 +582,7 @@ class Chessgame
             if !legal_move && legal_hit && field_empty?(target_field)
                 if !move_is_en_passant?(board, start_piece, target, color)
                     @error_message = "Invalid move! A #{start_piece.name} cannot walk that way! Please choose a valid move"
+                    exit
                     return false
                 end
             end
@@ -706,7 +737,7 @@ class Chessgame
                     end
                     if valid_start
                         @error_message = nil
-                        draw_board!(@board, false)
+                        draw_board!(@board, false, start)
                         puts "#{color_name(color)}".bold + ", where should the " + "#{@board[start].piece.name}".bold + " move to from " + "#{input_start}".bold + "?"
                         print "> "
                         input_target = STDIN.gets.chomp
@@ -747,7 +778,7 @@ class Chessgame
                             end
                             if valid_start
                                 @error_message = nil
-                                draw_board!(@board, false)
+                                draw_board!(@board, false, start)
                                 puts "#{color_name(color)}".bold + ", where should the " + "#{@board[start].piece.name}".bold + " move to from " + "#{input_start}".bold + "?"
                                 print "> "
                                 input_target = STDIN.gets.chomp
@@ -919,45 +950,38 @@ class Rook < ChessPiece
     end
 end
 
-# puts "Welcome to " + "CommandLine Chess v0.1".bold + " by Jonas."
-# error = false
-# if ARGV[0].nil?
-#     error = true
-# else
-#     if ARGV[0] != "0" && ARGV[0] != "1" && ARGV[0] != "2" 
-#         error = true
-#     end
-# end
-# if error
-#     puts ""
-#     puts "usage 'commandlinechess.rb p <c>'" 
-#     puts "  "
-#     puts "  p   Number of players   0 -> A.I. vs A.I."
-#     puts "                          1 -> User vs A.I."
-#     puts "                          2 -> User vs User"
-#     puts "  "
-#     puts "  c   Color of User       w -> User White, A.I. Black (default)"
-#     puts "      (optional)          b -> User White, A.I. Black"
-#     puts ""
-# else
-#     players = ARGV[0].to_i 
-#     ai_color = -1
-#     if ARGV[1] != nil
-#         if ARGV[1].to_s.downcase == "b"
-#              ai_color = 1
-#         end
-#     end
+puts "Welcome to " + "CommandLine Chess v0.1".bold + " by Jonas."
+error = false
+if ARGV[0].nil?
+    error = true
+else
+    if ARGV[0] != "0" && ARGV[0] != "1" && ARGV[0] != "2" 
+        error = true
+    end
+end
+if error
+    puts ""
+    puts "usage 'commandlinechess.rb p <c>'" 
+    puts "  "
+    puts "  p   Number of players   0 -> A.I. vs A.I."
+    puts "                          1 -> User vs A.I."
+    puts "                          2 -> User vs User"
+    puts "  "
+    puts "  c   Color of User       w -> User White, A.I. Black (default)"
+    puts "      (optional)          b -> User White, A.I. Black"
+    puts ""
+else
+    players = ARGV[0].to_i 
+    ai_color = -1
+    if ARGV[1] != nil
+        if ARGV[1].to_s.downcase == "b"
+             ai_color = 1
+        end
+    end
 
-#     game = Chessgame.new()
-#     game.new_game!(1, players, ai_color)
-# end
-game = Chessgame.new()
-game.make_move!(game.board, 1, [4,2], [4,5])
-game.make_move!(game.board, -1, [3,7], [3,5])
-game.new_game!(1, 2, 1)
-# 
-
+    game = Chessgame.new()
+    game.new_game!(1, players, ai_color)
+end
 
 # open
-# - Special Move: En Passant 
 # - Add a colored version of a piece to the board after selecting a piece for a move to indicate possible moves...?
