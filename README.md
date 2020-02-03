@@ -1,6 +1,6 @@
-# commandlinechess
+## commandlinechess
 A command-line based chess game with ruby, created as part of theodinproject ruby programming curriculum.
-Dependencies: colorize ~> 0.8.1
+Dependencies: colorize
 
 # Features
 Gameplay
@@ -13,5 +13,5 @@ Game Enginge
 - Pawn promotion to Queens
 - En passant
 
-- TO-DO
+To-Do
 - Load or save a game at anypoint.
