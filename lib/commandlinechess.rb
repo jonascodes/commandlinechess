@@ -74,12 +74,12 @@ class Chessgame
             #step 6: remove the rook from the start field
             board[rook_start].piece = nil
 
-        elsif move_is_en_passant?(start_piece, target, color)
+        elsif move_is_en_passant?(board, start_piece, target, color)
             
             #step 0: delete the oponent pawn that was hit en_passant
             #the oponent pawn will be on the same line as the players' pawn start, and in the same column as the pawns target
             pawn = [target[0],start[1]]
-            board[pawn] = nil 
+            board[pawn].piece = nil 
 
             #step 1: update the target field to contain the piece
             board[target].piece = board[start].piece
@@ -389,7 +389,22 @@ class Chessgame
     end
 
     #returns true if the move is an attempt to perform a castling
-    def move_is_en_passant?(start_piece, target, color)
+    def move_is_en_passant?(board, start_piece, target, color)
+        #a pawn stands on the 4th line of the oponent 
+        if start_piece.name == "Pawn" && ((color == 1 && start_piece.position[1] == 5) || (color == -1 && start_piece.position[1] == 4))
+            #move is a hit => move is not straight forward and target field is empty
+            if start_piece.position[0] != target[0] && field_empty?(board[target])
+                #an oponent pawn must stand next to the pawn, and he must have moved there with it's first move
+                oponent_pawn_position = [target[0], start_piece.position[1]]
+                oponent_pawn_field = board[oponent_pawn_position]
+                piece = oponent_pawn_field.piece
+                if piece != nil
+                    if piece.name == "Pawn" && piece.moves == 1
+                        return true
+                    end
+                end
+            end
+        end
         return false
     end
 
@@ -535,8 +550,10 @@ class Chessgame
             end
             #for pawn, for a move, the field has to be empty, for a hit it has to be occupied.
             if !legal_move && legal_hit && field_empty?(target_field)
-                @error_message = "Invalid move! A #{start_piece.name} cannot walk that way! Please choose a valid move"
-                return false
+                if !move_is_en_passant?(board, start_piece, target, color)
+                    @error_message = "Invalid move! A #{start_piece.name} cannot walk that way! Please choose a valid move"
+                    return false
+                end
             end
 
         else
@@ -902,38 +919,44 @@ class Rook < ChessPiece
     end
 end
 
-puts "Welcome to " + "CommandLine Chess v0.1".bold + " by Jonas."
-error = false
-if ARGV[0].nil?
-    error = true
-else
-    if ARGV[0] != "0" && ARGV[0] != "1" && ARGV[0] != "2" 
-        error = true
-    end
-end
-if error
-    puts ""
-    puts "usage 'commandlinechess.rb p <c>'" 
-    puts "  "
-    puts "  p   Number of players   0 -> A.I. vs A.I."
-    puts "                          1 -> User vs A.I."
-    puts "                          2 -> User vs User"
-    puts "  "
-    puts "  c   Color of User       w -> User White, A.I. Black (default)"
-    puts "      (optional)          b -> User White, A.I. Black"
-    puts ""
-else
-    players = ARGV[0].to_i 
-    ai_color = -1
-    if ARGV[1] != nil
-        if ARGV[1].to_s.downcase == "b"
-             ai_color = 1
-        end
-    end
+# puts "Welcome to " + "CommandLine Chess v0.1".bold + " by Jonas."
+# error = false
+# if ARGV[0].nil?
+#     error = true
+# else
+#     if ARGV[0] != "0" && ARGV[0] != "1" && ARGV[0] != "2" 
+#         error = true
+#     end
+# end
+# if error
+#     puts ""
+#     puts "usage 'commandlinechess.rb p <c>'" 
+#     puts "  "
+#     puts "  p   Number of players   0 -> A.I. vs A.I."
+#     puts "                          1 -> User vs A.I."
+#     puts "                          2 -> User vs User"
+#     puts "  "
+#     puts "  c   Color of User       w -> User White, A.I. Black (default)"
+#     puts "      (optional)          b -> User White, A.I. Black"
+#     puts ""
+# else
+#     players = ARGV[0].to_i 
+#     ai_color = -1
+#     if ARGV[1] != nil
+#         if ARGV[1].to_s.downcase == "b"
+#              ai_color = 1
+#         end
+#     end
 
-    game = Chessgame.new()
-    game.new_game!(1, players, ai_color)
-end
+#     game = Chessgame.new()
+#     game.new_game!(1, players, ai_color)
+# end
+game = Chessgame.new()
+game.make_move!(game.board, 1, [4,2], [4,5])
+game.make_move!(game.board, -1, [3,7], [3,5])
+game.new_game!(1, 2, 1)
+# 
+
 
 # open
 # - Special Move: En Passant 
