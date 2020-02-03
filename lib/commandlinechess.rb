@@ -39,7 +39,7 @@ class Chessgame
         start_piece = board[start].piece
 
         #if move is a castling
-        if start_piece.name == "King" && ((color == 1 && start_piece.position == [4,1] && (target == [2,1] || target == [6,1])) || (color == -1 && start_piece.position == [4,8] && (target == [2,8] || target == [6,8])))
+        if move_is_castling?(start_piece, target, color)
 
             king = board[start].piece
             rook_start = [1,1] if target == [2,1]
@@ -71,8 +71,25 @@ class Chessgame
             board[rook_target].piece.position = rook_target
             board[rook_target].piece.moves += 1
 
-            #step 3: remove the rook from the start field
+            #step 6: remove the rook from the start field
             board[rook_start].piece = nil
+
+        elsif move_is_en_passant?(start_piece, target, color)
+            
+            #step 0: delete the oponent pawn that was hit en_passant
+            #the oponent pawn will be on the same line as the players' pawn start, and in the same column as the pawns target
+            pawn = [target[0],start[1]]
+            board[pawn] = nil 
+
+            #step 1: update the target field to contain the piece
+            board[target].piece = board[start].piece
+
+            #step 2: update the pieces's postion to the target field & increase move counter
+            board[target].piece.position = target
+            board[target].piece.moves += 1
+
+            #step 3: remove the piece from the start field
+            board[start].piece = nil
 
         else
             #step 1: update the target field to contain the piece
@@ -82,7 +99,7 @@ class Chessgame
             board[target].piece.position = target
             board[target].piece.moves += 1
 
-            #step 2: remove the piece from the start field
+            #step 3: remove the piece from the start field
             board[start].piece = nil
 
             #extra: if a pawn reaches the end of the field, it becomes a queen.
@@ -371,6 +388,11 @@ class Chessgame
         return start_piece.name == "King" && ((color == 1 && start_piece.position == [4,1] && (target == [2,1] || target == [6,1])) || (color == -1 && start_piece.position == [4,8] && (target == [2,8] || target == [6,8])))        
     end
 
+    #returns true if the move is an attempt to perform a castling
+    def move_is_en_passant?(start_piece, target, color)
+        return false
+    end
+
     #check if an attempted castling meets all requirements
     def castling_conditions_met?(board, start_piece, target, color)
         
@@ -510,6 +532,11 @@ class Chessgame
                     @error_message =  "Invalid move! The path from #{translate_to_user_input(start)} to #{translate_to_user_input(target)} is blocked."
                     return false
                 end
+            end
+            #for pawn, for a move, the field has to be empty, for a hit it has to be occupied.
+            if !legal_move && legal_hit && field_empty?(target_field)
+                @error_message = "Invalid move! A #{start_piece.name} cannot walk that way! Please choose a valid move"
+                return false
             end
 
         else
