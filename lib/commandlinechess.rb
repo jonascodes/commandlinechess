@@ -1,4 +1,5 @@
 require 'colorize'
+require 'yaml'
 
 class Field
     attr_accessor :piece
@@ -164,6 +165,7 @@ class Chessgame
         in_check = in_check(board) # will show if a player is putting check on the other
         puts ""
         puts "CommandLine Chess v0.1 by Jonas - Turn #{(@turns+1)/2.to_i}"
+        puts "enter 'save' to save a game and 'load' to load a game".light_black
         puts @last_move
         for y in 1..8
             print " #{9-y} "
@@ -582,7 +584,6 @@ class Chessgame
             if !legal_move && legal_hit && field_empty?(target_field)
                 if !move_is_en_passant?(board, start_piece, target, color)
                     @error_message = "Invalid move! A #{start_piece.name} cannot walk that way! Please choose a valid move"
-                    exit
                     return false
                 end
             end
@@ -731,6 +732,8 @@ class Chessgame
                     puts "#{color_name(color)}".bold + ", which piece do you want to move? (Enter field ID like 'e5')"
                     print "> "
                     input_start = STDIN.gets.chomp
+                    save_a_game() if input_start.downcase == "save"
+                    load_a_game() if input_start.downcase == "load"
                     if valid_syntax?(input_start)
                         start = translate_to_coordinate(input_start)
                         valid_start = valid_start_field?(@board, color, start)
@@ -741,6 +744,8 @@ class Chessgame
                         puts "#{color_name(color)}".bold + ", where should the " + "#{@board[start].piece.name}".bold + " move to from " + "#{input_start}".bold + "?"
                         print "> "
                         input_target = STDIN.gets.chomp
+                        save_a_game() if input_target.downcase == "save"
+                        load_a_game() if input_target.downcase == "load"
                         if valid_syntax?(input_target)
                             target = translate_to_coordinate(input_target)
                             valid_target = valid_move?(@board, color, start, target)
@@ -762,42 +767,43 @@ class Chessgame
 
             elsif players == 1
 
-                if ai_color == -1
-                    @error_message = nil
-                    valid_start = false
-                    valid_target = false
-                    if color == 1
-                        while !valid_start || !valid_target
-                            draw_board!(@board, false)
-                            puts "#{color_name(color)}".bold + ", which piece do you want to move? (Enter field ID like 'e5')"
+                
+                @error_message = nil
+                valid_start = false
+                valid_target = false
+                if color != ai_color
+                    while !valid_start || !valid_target
+                        draw_board!(@board, false)
+                        puts "#{color_name(color)}".bold + ", which piece do you want to move? (Enter field ID like 'e5')"
+                        print "> "
+                        input_start = STDIN.gets.chomp
+                        save_a_game() if input_start.downcase == "save"
+                        load_a_game() if input_start.downcase == "load"
+                        if valid_syntax?(input_start)
+                            start = translate_to_coordinate(input_start)
+                            valid_start = valid_start_field?(@board, color, start)
+                        end
+                        if valid_start
+                            @error_message = nil
+                            draw_board!(@board, false, start)
+                            puts "#{color_name(color)}".bold + ", where should the " + "#{@board[start].piece.name}".bold + " move to from " + "#{input_start}".bold + "?"
                             print "> "
-                            input_start = STDIN.gets.chomp
-                            if valid_syntax?(input_start)
-                                start = translate_to_coordinate(input_start)
-                                valid_start = valid_start_field?(@board, color, start)
-                            end
-                            if valid_start
-                                @error_message = nil
-                                draw_board!(@board, false, start)
-                                puts "#{color_name(color)}".bold + ", where should the " + "#{@board[start].piece.name}".bold + " move to from " + "#{input_start}".bold + "?"
-                                print "> "
-                                input_target = STDIN.gets.chomp
-                                if valid_syntax?(input_target)
-                                    target = translate_to_coordinate(input_target)
-                                    valid_target = valid_move?(@board, color, start, target)
-                                end
+                            input_target = STDIN.gets.chomp
+                            save_a_game() if input_target.downcase == "save"
+                            load_a_game() if input_target.downcase == "load"
+                            if valid_syntax?(input_target)
+                                target = translate_to_coordinate(input_target)
+                                valid_target = valid_move?(@board, color, start, target)
                             end
                         end
-                        target = translate_to_coordinate(input_target)
-                        @last_move = "#{color_name(color)}: #{@board[start].piece.name} #{input_start} -> #{input_target}".green
-
-                        make_move!(@board, color, start, target)
-                    else
-                        make_AI_move!(board, color)
-                        @error_message = ""
                     end
+                    target = translate_to_coordinate(input_target)
+                    @last_move = "#{color_name(color)}: #{@board[start].piece.name} #{input_start} -> #{input_target}".green
+
+                    make_move!(@board, color, start, target)
                 else
-                    ##!!!
+                    make_AI_move!(board, color)
+                    @error_message = ""
                 end
             end
             @turns += 1
@@ -807,6 +813,83 @@ class Chessgame
         draw_board!(@board, true)
         puts "#{color_name(color)} is checkmate!".bold + " " + "#{color_name(color * (-1))}".bold + " wins in #{(@turns/2).to_i} turns!"
 
+    end
+
+    #save_a_game
+    def save_a_game()
+        puts ""
+        puts "Save game - please enter filename (existing files will be overwritten)."
+        print "> "
+        filename = STDIN.gets.chomp
+        filename = filename.tr('^A-Za-z0-9', '')
+        save_game(filename.downcase)
+        system ("clear")
+        print "File has been saved as #{filename}. Press <ENTER> to continue."
+        filename = STDIN.gets.chomp
+    end
+
+    #load_a_game
+    def load_a_game()
+        system ("clear")
+        puts "Load game - available savegames:"
+        files = Dir["./savegames/*.chess.board.save"]
+        files.each_with_index do |f, index|
+            file = f["./savegames/".length..f.length-18]
+            files[index] = file
+            puts " #{file}"
+        end
+        puts ""
+        puts "Please enter the name of the savegame you want to lead."
+        puts "(Press <ENTER> to return to your game)".light_black
+        print "> "
+        filename = STDIN.gets.chomp
+        if filename != ""
+            filename = filename.tr('^A-Za-z0-9', '').downcase
+            if files.include?(filename)
+                load_game(filename)
+            else
+                puts ""
+                puts "Invalid filename. Press <ENTER> to continue."
+                load_a_game()
+            end
+            print "Game #{filename} loaded. Press <ENTER> to continue."
+        end
+    end
+
+    #saves the game
+    def save_game(filename)
+        file_board = "./savegames/" + filename + ".chess.board.save"
+        file_turns = "./savegames/" + filename + ".chess.turns.save"
+        file_lastmove = "./savegames/" + filename + ".chess.lastmove.save"
+        myfile_board = File.open(file_board, "w")
+        myfile_turns = File.open(file_turns, "w")
+        myfile_lastmove = File.open(file_lastmove, "w")
+        YAML.dump(@board, myfile_board)
+        YAML.dump(@turns, myfile_turns)
+        YAML.dump(@last_move, myfile_lastmove)
+        myfile_board.close
+        myfile_turns.close
+        myfile_lastmove.close
+        return "Game saved: " + filename.bold
+    end
+
+    def load_game(filename)
+        file_board = "./savegames/" + filename + ".chess.board.save"
+        file_turns = "./savegames/" + filename + ".chess.turns.save"
+        file_lastmove = "./savegames/" + filename + ".chess.lastmove.save"
+        if File.file?(file_board)
+            myfile_board = File.open(file_board, "r")
+            myfile_turns = File.open(file_turns, "r")
+            myfile_lastmove = File.open(file_lastmove, "r")
+            @board = YAML.load(myfile_board)
+            @turns = YAML.load(myfile_turns)
+            @last_move = YAML.load(myfile_lastmove)
+            myfile_board.close
+            myfile_turns.close
+            myfile_lastmove.close
+        else
+            return "Savegame '" + "#{filename}".bold + "' not found."
+        end
     end
 
 end
@@ -982,6 +1065,3 @@ else
     game = Chessgame.new()
     game.new_game!(1, players, ai_color)
 end
-
-# open
-# - Add a colored version of a piece to the board after selecting a piece for a move to indicate possible moves...?

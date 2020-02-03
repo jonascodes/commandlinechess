@@ -1,0 +1,1601 @@
+---
+? - 1
+  - 1
+: !ruby/object:Field
+  color: 1
+  piece: !ruby/object:Rook
+    position:
+    - 1
+    - 1
+    walk: &1
+    - - 0
+      - 1
+    - - 0
+      - 2
+    - - 0
+      - 3
+    - - 0
+      - 4
+    - - 0
+      - 5
+    - - 0
+      - 6
+    - - 0
+      - 7
+    - - 0
+      - -1
+    - - 0
+      - -2
+    - - 0
+      - -3
+    - - 0
+      - -4
+    - - 0
+      - -5
+    - - 0
+      - -6
+    - - 0
+      - -7
+    - - 1
+      - 0
+    - - 2
+      - 0
+    - - 3
+      - 0
+    - - 4
+      - 0
+    - - 5
+      - 0
+    - - 6
+      - 0
+    - - 7
+      - 0
+    - - -1
+      - 0
+    - - -2
+      - 0
+    - - -3
+      - 0
+    - - -4
+      - 0
+    - - -5
+      - 0
+    - - -6
+      - 0
+    - - -7
+      - 0
+    hit: *1
+    jumps: false
+    color: 1
+    moves: 0
+    symbol: "♖"
+    name: Rook
+? - 1
+  - 2
+: !ruby/object:Field
+  color: -1
+  piece: !ruby/object:Pawn
+    position:
+    - 1
+    - 2
+    walk:
+    - - 0
+      - 1
+    walk_first:
+    - - 0
+      - 1
+    - - 0
+      - 2
+    hit:
+    - - -1
+      - 1
+    - - 1
+      - 1
+    color: 1
+    jumps: false
+    moves: 0
+    symbol: "♙"
+    name: Pawn
+? - 1
+  - 3
+: !ruby/object:Field
+  color: 1
+  piece: 
+? - 1
+  - 4
+: !ruby/object:Field
+  color: -1
+  piece: 
+? - 1
+  - 5
+: !ruby/object:Field
+  color: 1
+  piece: !ruby/object:Queen
+    position:
+    - 1
+    - 5
+    walk: &2
+    - - 1
+      - 1
+    - - 2
+      - 2
+    - - 3
+      - 3
+    - - 4
+      - 4
+    - - 5
+      - 5
+    - - 6
+      - 6
+    - - 7
+      - 7
+    - - -1
+      - -1
+    - - -2
+      - -2
+    - - -3
+      - -3
+    - - -4
+      - -4
+    - - -5
+      - -5
+    - - -6
+      - -6
+    - - -7
+      - -7
+    - - -1
+      - 1
+    - - -2
+      - 2
+    - - -3
+      - 3
+    - - -4
+      - 4
+    - - -5
+      - 5
+    - - -6
+      - 6
+    - - -7
+      - 7
+    - - 1
+      - -1
+    - - 2
+      - -2
+    - - 3
+      - -3
+    - - 4
+      - -4
+    - - 5
+      - -5
+    - - 6
+      - -6
+    - - 7
+      - -7
+    - - 0
+      - 1
+    - - 0
+      - 2
+    - - 0
+      - 3
+    - - 0
+      - 4
+    - - 0
+      - 5
+    - - 0
+      - 6
+    - - 0
+      - 7
+    - - 0
+      - -1
+    - - 0
+      - -2
+    - - 0
+      - -3
+    - - 0
+      - -4
+    - - 0
+      - -5
+    - - 0
+      - -6
+    - - 0
+      - -7
+    - - 1
+      - 0
+    - - 2
+      - 0
+    - - 3
+      - 0
+    - - 4
+      - 0
+    - - 5
+      - 0
+    - - 6
+      - 0
+    - - 7
+      - 0
+    - - -1
+      - 0
+    - - -2
+      - 0
+    - - -3
+      - 0
+    - - -4
+      - 0
+    - - -5
+      - 0
+    - - -6
+      - 0
+    - - -7
+      - 0
+    hit: *2
+    jumps: false
+    color: 1
+    moves: 1
+    symbol: "♕"
+    name: Queen
+? - 1
+  - 6
+: !ruby/object:Field
+  color: -1
+  piece: 
+? - 1
+  - 7
+: !ruby/object:Field
+  color: 1
+  piece: !ruby/object:Pawn
+    position:
+    - 1
+    - 7
+    walk:
+    - - 0
+      - -1
+    walk_first:
+    - - 0
+      - -1
+    - - 0
+      - -2
+    hit:
+    - - -1
+      - -1
+    - - 1
+      - -1
+    color: -1
+    jumps: false
+    moves: 0
+    symbol: "♟"
+    name: Pawn
+? - 1
+  - 8
+: !ruby/object:Field
+  color: -1
+  piece: !ruby/object:Rook
+    position:
+    - 1
+    - 8
+    walk: &3
+    - - 0
+      - 1
+    - - 0
+      - 2
+    - - 0
+      - 3
+    - - 0
+      - 4
+    - - 0
+      - 5
+    - - 0
+      - 6
+    - - 0
+      - 7
+    - - 0
+      - -1
+    - - 0
+      - -2
+    - - 0
+      - -3
+    - - 0
+      - -4
+    - - 0
+      - -5
+    - - 0
+      - -6
+    - - 0
+      - -7
+    - - 1
+      - 0
+    - - 2
+      - 0
+    - - 3
+      - 0
+    - - 4
+      - 0
+    - - 5
+      - 0
+    - - 6
+      - 0
+    - - 7
+      - 0
+    - - -1
+      - 0
+    - - -2
+      - 0
+    - - -3
+      - 0
+    - - -4
+      - 0
+    - - -5
+      - 0
+    - - -6
+      - 0
+    - - -7
+      - 0
+    hit: *3
+    jumps: false
+    color: -1
+    moves: 0
+    symbol: "♜"
+    name: Rook
+? - 2
+  - 1
+: !ruby/object:Field
+  color: -1
+  piece: !ruby/object:Knight
+    position:
+    - 2
+    - 1
+    walk: &4
+    - - 1
+      - 2
+    - - 2
+      - 1
+    - - -1
+      - 2
+    - - -2
+      - 1
+    - - 1
+      - -2
+    - - 2
+      - -1
+    - - -1
+      - -2
+    - - -2
+      - -1
+    hit: *4
+    color: 1
+    jumps: true
+    moves: 0
+    symbol: "♘"
+    name: Knight
+? - 2
+  - 2
+: !ruby/object:Field
+  color: 1
+  piece: !ruby/object:Pawn
+    position:
+    - 2
+    - 2
+    walk:
+    - - 0
+      - 1
+    walk_first:
+    - - 0
+      - 1
+    - - 0
+      - 2
+    hit:
+    - - -1
+      - 1
+    - - 1
+      - 1
+    color: 1
+    jumps: false
+    moves: 0
+    symbol: "♙"
+    name: Pawn
+? - 2
+  - 3
+: !ruby/object:Field
+  color: -1
+  piece: 
+? - 2
+  - 4
+: !ruby/object:Field
+  color: 1
+  piece: 
+? - 2
+  - 5
+: !ruby/object:Field
+  color: -1
+  piece: 
+? - 2
+  - 6
+: !ruby/object:Field
+  color: 1
+  piece: 
+? - 2
+  - 7
+: !ruby/object:Field
+  color: -1
+  piece: !ruby/object:Pawn
+    position:
+    - 2
+    - 7
+    walk:
+    - - 0
+      - -1
+    walk_first:
+    - - 0
+      - -1
+    - - 0
+      - -2
+    hit:
+    - - -1
+      - -1
+    - - 1
+      - -1
+    color: -1
+    jumps: false
+    moves: 0
+    symbol: "♟"
+    name: Pawn
+? - 2
+  - 8
+: !ruby/object:Field
+  color: 1
+  piece: !ruby/object:Knight
+    position:
+    - 2
+    - 8
+    walk: &5
+    - - 1
+      - 2
+    - - 2
+      - 1
+    - - -1
+      - 2
+    - - -2
+      - 1
+    - - 1
+      - -2
+    - - 2
+      - -1
+    - - -1
+      - -2
+    - - -2
+      - -1
+    hit: *5
+    color: -1
+    jumps: true
+    moves: 0
+    symbol: "♞"
+    name: Knight
+? - 3
+  - 1
+: !ruby/object:Field
+  color: 1
+  piece: !ruby/object:Bishop
+    position:
+    - 3
+    - 1
+    walk: &6
+    - - 1
+      - 1
+    - - 2
+      - 2
+    - - 3
+      - 3
+    - - 4
+      - 4
+    - - 5
+      - 5
+    - - 6
+      - 6
+    - - 7
+      - 7
+    - - -1
+      - -1
+    - - -2
+      - -2
+    - - -3
+      - -3
+    - - -4
+      - -4
+    - - -5
+      - -5
+    - - -6
+      - -6
+    - - -7
+      - -7
+    - - -1
+      - 1
+    - - -2
+      - 2
+    - - -3
+      - 3
+    - - -4
+      - 4
+    - - -5
+      - 5
+    - - -6
+      - 6
+    - - -7
+      - 7
+    - - 1
+      - -1
+    - - 2
+      - -2
+    - - 3
+      - -3
+    - - 4
+      - -4
+    - - 5
+      - -5
+    - - 6
+      - -6
+    - - 7
+      - -7
+    hit: *6
+    color: 1
+    jumps: false
+    x: 3
+    y: 1
+    moves: 0
+    symbol: "♗"
+    name: Bishop
+? - 3
+  - 2
+: !ruby/object:Field
+  color: -1
+  piece: !ruby/object:Pawn
+    position:
+    - 3
+    - 2
+    walk:
+    - - 0
+      - 1
+    walk_first:
+    - - 0
+      - 1
+    - - 0
+      - 2
+    hit:
+    - - -1
+      - 1
+    - - 1
+      - 1
+    color: 1
+    jumps: false
+    moves: 0
+    symbol: "♙"
+    name: Pawn
+? - 3
+  - 3
+: !ruby/object:Field
+  color: 1
+  piece: 
+? - 3
+  - 4
+: !ruby/object:Field
+  color: -1
+  piece: 
+? - 3
+  - 5
+: !ruby/object:Field
+  color: 1
+  piece: 
+? - 3
+  - 6
+: !ruby/object:Field
+  color: -1
+  piece: 
+? - 3
+  - 7
+: !ruby/object:Field
+  color: 1
+  piece: !ruby/object:Pawn
+    position:
+    - 3
+    - 7
+    walk:
+    - - 0
+      - -1
+    walk_first:
+    - - 0
+      - -1
+    - - 0
+      - -2
+    hit:
+    - - -1
+      - -1
+    - - 1
+      - -1
+    color: -1
+    jumps: false
+    moves: 0
+    symbol: "♟"
+    name: Pawn
+? - 3
+  - 8
+: !ruby/object:Field
+  color: -1
+  piece: !ruby/object:Bishop
+    position:
+    - 3
+    - 8
+    walk: &7
+    - - 1
+      - 1
+    - - 2
+      - 2
+    - - 3
+      - 3
+    - - 4
+      - 4
+    - - 5
+      - 5
+    - - 6
+      - 6
+    - - 7
+      - 7
+    - - -1
+      - -1
+    - - -2
+      - -2
+    - - -3
+      - -3
+    - - -4
+      - -4
+    - - -5
+      - -5
+    - - -6
+      - -6
+    - - -7
+      - -7
+    - - -1
+      - 1
+    - - -2
+      - 2
+    - - -3
+      - 3
+    - - -4
+      - 4
+    - - -5
+      - 5
+    - - -6
+      - 6
+    - - -7
+      - 7
+    - - 1
+      - -1
+    - - 2
+      - -2
+    - - 3
+      - -3
+    - - 4
+      - -4
+    - - 5
+      - -5
+    - - 6
+      - -6
+    - - 7
+      - -7
+    hit: *7
+    color: -1
+    jumps: false
+    x: 3
+    y: 8
+    moves: 0
+    symbol: "♝"
+    name: Bishop
+? - 4
+  - 1
+: !ruby/object:Field
+  color: -1
+  piece: !ruby/object:King
+    position:
+    - 4
+    - 1
+    walk:
+    - - -1
+      - 1
+    - - -1
+      - 0
+    - - -1
+      - -1
+    - - 0
+      - 1
+    - - 0
+      - -1
+    - - 1
+      - 1
+    - - 1
+      - 0
+    - - 1
+      - -1
+    hit:
+    - - -1
+      - 1
+    - - 1
+      - 1
+    color: 1
+    jumps: false
+    moves: 0
+    symbol: "♔"
+    name: King
+? - 4
+  - 2
+: !ruby/object:Field
+  color: 1
+  piece: 
+? - 4
+  - 3
+: !ruby/object:Field
+  color: -1
+  piece: 
+? - 4
+  - 4
+: !ruby/object:Field
+  color: 1
+  piece: !ruby/object:Pawn
+    position:
+    - 4
+    - 4
+    walk:
+    - - 0
+      - 1
+    walk_first:
+    - - 0
+      - 1
+    - - 0
+      - 2
+    hit:
+    - - -1
+      - 1
+    - - 1
+      - 1
+    color: 1
+    jumps: false
+    moves: 1
+    symbol: "♙"
+    name: Pawn
+? - 4
+  - 5
+: !ruby/object:Field
+  color: -1
+  piece: 
+? - 4
+  - 6
+: !ruby/object:Field
+  color: 1
+  piece: 
+? - 4
+  - 7
+: !ruby/object:Field
+  color: -1
+  piece: !ruby/object:Pawn
+    position:
+    - 4
+    - 7
+    walk:
+    - - 0
+      - -1
+    walk_first:
+    - - 0
+      - -1
+    - - 0
+      - -2
+    hit:
+    - - -1
+      - -1
+    - - 1
+      - -1
+    color: -1
+    jumps: false
+    moves: 0
+    symbol: "♟"
+    name: Pawn
+? - 4
+  - 8
+: !ruby/object:Field
+  color: 1
+  piece: !ruby/object:King
+    position:
+    - 4
+    - 8
+    walk:
+    - - -1
+      - 1
+    - - -1
+      - 0
+    - - -1
+      - -1
+    - - 0
+      - 1
+    - - 0
+      - -1
+    - - 1
+      - 1
+    - - 1
+      - 0
+    - - 1
+      - -1
+    hit:
+    - - -1
+      - -1
+    - - 1
+      - -1
+    color: -1
+    jumps: false
+    moves: 0
+    symbol: "♚"
+    name: King
+? - 5
+  - 1
+: !ruby/object:Field
+  color: 1
+  piece: 
+? - 5
+  - 2
+: !ruby/object:Field
+  color: -1
+  piece: !ruby/object:Pawn
+    position:
+    - 5
+    - 2
+    walk:
+    - - 0
+      - 1
+    walk_first:
+    - - 0
+      - 1
+    - - 0
+      - 2
+    hit:
+    - - -1
+      - 1
+    - - 1
+      - 1
+    color: 1
+    jumps: false
+    moves: 0
+    symbol: "♙"
+    name: Pawn
+? - 5
+  - 3
+: !ruby/object:Field
+  color: 1
+  piece: 
+? - 5
+  - 4
+: !ruby/object:Field
+  color: -1
+  piece: 
+? - 5
+  - 5
+: !ruby/object:Field
+  color: 1
+  piece: 
+? - 5
+  - 6
+: !ruby/object:Field
+  color: -1
+  piece: 
+? - 5
+  - 7
+: !ruby/object:Field
+  color: 1
+  piece: !ruby/object:Pawn
+    position:
+    - 5
+    - 7
+    walk:
+    - - 0
+      - -1
+    walk_first:
+    - - 0
+      - -1
+    - - 0
+      - -2
+    hit:
+    - - -1
+      - -1
+    - - 1
+      - -1
+    color: -1
+    jumps: false
+    moves: 0
+    symbol: "♟"
+    name: Pawn
+? - 5
+  - 8
+: !ruby/object:Field
+  color: -1
+  piece: !ruby/object:Queen
+    position:
+    - 5
+    - 8
+    walk: &8
+    - - 1
+      - 1
+    - - 2
+      - 2
+    - - 3
+      - 3
+    - - 4
+      - 4
+    - - 5
+      - 5
+    - - 6
+      - 6
+    - - 7
+      - 7
+    - - -1
+      - -1
+    - - -2
+      - -2
+    - - -3
+      - -3
+    - - -4
+      - -4
+    - - -5
+      - -5
+    - - -6
+      - -6
+    - - -7
+      - -7
+    - - -1
+      - 1
+    - - -2
+      - 2
+    - - -3
+      - 3
+    - - -4
+      - 4
+    - - -5
+      - 5
+    - - -6
+      - 6
+    - - -7
+      - 7
+    - - 1
+      - -1
+    - - 2
+      - -2
+    - - 3
+      - -3
+    - - 4
+      - -4
+    - - 5
+      - -5
+    - - 6
+      - -6
+    - - 7
+      - -7
+    - - 0
+      - 1
+    - - 0
+      - 2
+    - - 0
+      - 3
+    - - 0
+      - 4
+    - - 0
+      - 5
+    - - 0
+      - 6
+    - - 0
+      - 7
+    - - 0
+      - -1
+    - - 0
+      - -2
+    - - 0
+      - -3
+    - - 0
+      - -4
+    - - 0
+      - -5
+    - - 0
+      - -6
+    - - 0
+      - -7
+    - - 1
+      - 0
+    - - 2
+      - 0
+    - - 3
+      - 0
+    - - 4
+      - 0
+    - - 5
+      - 0
+    - - 6
+      - 0
+    - - 7
+      - 0
+    - - -1
+      - 0
+    - - -2
+      - 0
+    - - -3
+      - 0
+    - - -4
+      - 0
+    - - -5
+      - 0
+    - - -6
+      - 0
+    - - -7
+      - 0
+    hit: *8
+    jumps: false
+    color: -1
+    moves: 0
+    symbol: "♛"
+    name: Queen
+? - 6
+  - 1
+: !ruby/object:Field
+  color: -1
+  piece: !ruby/object:Bishop
+    position:
+    - 6
+    - 1
+    walk: &9
+    - - 1
+      - 1
+    - - 2
+      - 2
+    - - 3
+      - 3
+    - - 4
+      - 4
+    - - 5
+      - 5
+    - - 6
+      - 6
+    - - 7
+      - 7
+    - - -1
+      - -1
+    - - -2
+      - -2
+    - - -3
+      - -3
+    - - -4
+      - -4
+    - - -5
+      - -5
+    - - -6
+      - -6
+    - - -7
+      - -7
+    - - -1
+      - 1
+    - - -2
+      - 2
+    - - -3
+      - 3
+    - - -4
+      - 4
+    - - -5
+      - 5
+    - - -6
+      - 6
+    - - -7
+      - 7
+    - - 1
+      - -1
+    - - 2
+      - -2
+    - - 3
+      - -3
+    - - 4
+      - -4
+    - - 5
+      - -5
+    - - 6
+      - -6
+    - - 7
+      - -7
+    hit: *9
+    color: 1
+    jumps: false
+    x: 6
+    y: 1
+    moves: 0
+    symbol: "♗"
+    name: Bishop
+? - 6
+  - 2
+: !ruby/object:Field
+  color: 1
+  piece: !ruby/object:Pawn
+    position:
+    - 6
+    - 2
+    walk:
+    - - 0
+      - 1
+    walk_first:
+    - - 0
+      - 1
+    - - 0
+      - 2
+    hit:
+    - - -1
+      - 1
+    - - 1
+      - 1
+    color: 1
+    jumps: false
+    moves: 0
+    symbol: "♙"
+    name: Pawn
+? - 6
+  - 3
+: !ruby/object:Field
+  color: -1
+  piece: 
+? - 6
+  - 4
+: !ruby/object:Field
+  color: 1
+  piece: 
+? - 6
+  - 5
+: !ruby/object:Field
+  color: -1
+  piece: 
+? - 6
+  - 6
+: !ruby/object:Field
+  color: 1
+  piece: !ruby/object:Pawn
+    position:
+    - 6
+    - 6
+    walk:
+    - - 0
+      - -1
+    walk_first:
+    - - 0
+      - -1
+    - - 0
+      - -2
+    hit:
+    - - -1
+      - -1
+    - - 1
+      - -1
+    color: -1
+    jumps: false
+    moves: 1
+    symbol: "♟"
+    name: Pawn
+? - 6
+  - 7
+: !ruby/object:Field
+  color: -1
+  piece: 
+? - 6
+  - 8
+: !ruby/object:Field
+  color: 1
+  piece: !ruby/object:Bishop
+    position:
+    - 6
+    - 8
+    walk: &10
+    - - 1
+      - 1
+    - - 2
+      - 2
+    - - 3
+      - 3
+    - - 4
+      - 4
+    - - 5
+      - 5
+    - - 6
+      - 6
+    - - 7
+      - 7
+    - - -1
+      - -1
+    - - -2
+      - -2
+    - - -3
+      - -3
+    - - -4
+      - -4
+    - - -5
+      - -5
+    - - -6
+      - -6
+    - - -7
+      - -7
+    - - -1
+      - 1
+    - - -2
+      - 2
+    - - -3
+      - 3
+    - - -4
+      - 4
+    - - -5
+      - 5
+    - - -6
+      - 6
+    - - -7
+      - 7
+    - - 1
+      - -1
+    - - 2
+      - -2
+    - - 3
+      - -3
+    - - 4
+      - -4
+    - - 5
+      - -5
+    - - 6
+      - -6
+    - - 7
+      - -7
+    hit: *10
+    color: -1
+    jumps: false
+    x: 6
+    y: 8
+    moves: 0
+    symbol: "♝"
+    name: Bishop
+? - 7
+  - 1
+: !ruby/object:Field
+  color: 1
+  piece: !ruby/object:Knight
+    position:
+    - 7
+    - 1
+    walk: &11
+    - - 1
+      - 2
+    - - 2
+      - 1
+    - - -1
+      - 2
+    - - -2
+      - 1
+    - - 1
+      - -2
+    - - 2
+      - -1
+    - - -1
+      - -2
+    - - -2
+      - -1
+    hit: *11
+    color: 1
+    jumps: true
+    moves: 0
+    symbol: "♘"
+    name: Knight
+? - 7
+  - 2
+: !ruby/object:Field
+  color: -1
+  piece: !ruby/object:Pawn
+    position:
+    - 7
+    - 2
+    walk:
+    - - 0
+      - 1
+    walk_first:
+    - - 0
+      - 1
+    - - 0
+      - 2
+    hit:
+    - - -1
+      - 1
+    - - 1
+      - 1
+    color: 1
+    jumps: false
+    moves: 0
+    symbol: "♙"
+    name: Pawn
+? - 7
+  - 3
+: !ruby/object:Field
+  color: 1
+  piece: 
+? - 7
+  - 4
+: !ruby/object:Field
+  color: -1
+  piece: 
+? - 7
+  - 5
+: !ruby/object:Field
+  color: 1
+  piece: 
+? - 7
+  - 6
+: !ruby/object:Field
+  color: -1
+  piece: !ruby/object:Pawn
+    position:
+    - 7
+    - 6
+    walk:
+    - - 0
+      - -1
+    walk_first:
+    - - 0
+      - -1
+    - - 0
+      - -2
+    hit:
+    - - -1
+      - -1
+    - - 1
+      - -1
+    color: -1
+    jumps: false
+    moves: 1
+    symbol: "♟"
+    name: Pawn
+? - 7
+  - 7
+: !ruby/object:Field
+  color: 1
+  piece: 
+? - 7
+  - 8
+: !ruby/object:Field
+  color: -1
+  piece: !ruby/object:Knight
+    position:
+    - 7
+    - 8
+    walk: &12
+    - - 1
+      - 2
+    - - 2
+      - 1
+    - - -1
+      - 2
+    - - -2
+      - 1
+    - - 1
+      - -2
+    - - 2
+      - -1
+    - - -1
+      - -2
+    - - -2
+      - -1
+    hit: *12
+    color: -1
+    jumps: true
+    moves: 0
+    symbol: "♞"
+    name: Knight
+? - 8
+  - 1
+: !ruby/object:Field
+  color: -1
+  piece: !ruby/object:Rook
+    position:
+    - 8
+    - 1
+    walk: &13
+    - - 0
+      - 1
+    - - 0
+      - 2
+    - - 0
+      - 3
+    - - 0
+      - 4
+    - - 0
+      - 5
+    - - 0
+      - 6
+    - - 0
+      - 7
+    - - 0
+      - -1
+    - - 0
+      - -2
+    - - 0
+      - -3
+    - - 0
+      - -4
+    - - 0
+      - -5
+    - - 0
+      - -6
+    - - 0
+      - -7
+    - - 1
+      - 0
+    - - 2
+      - 0
+    - - 3
+      - 0
+    - - 4
+      - 0
+    - - 5
+      - 0
+    - - 6
+      - 0
+    - - 7
+      - 0
+    - - -1
+      - 0
+    - - -2
+      - 0
+    - - -3
+      - 0
+    - - -4
+      - 0
+    - - -5
+      - 0
+    - - -6
+      - 0
+    - - -7
+      - 0
+    hit: *13
+    jumps: false
+    color: 1
+    moves: 0
+    symbol: "♖"
+    name: Rook
+? - 8
+  - 2
+: !ruby/object:Field
+  color: 1
+  piece: !ruby/object:Pawn
+    position:
+    - 8
+    - 2
+    walk:
+    - - 0
+      - 1
+    walk_first:
+    - - 0
+      - 1
+    - - 0
+      - 2
+    hit:
+    - - -1
+      - 1
+    - - 1
+      - 1
+    color: 1
+    jumps: false
+    moves: 0
+    symbol: "♙"
+    name: Pawn
+? - 8
+  - 3
+: !ruby/object:Field
+  color: -1
+  piece: 
+? - 8
+  - 4
+: !ruby/object:Field
+  color: 1
+  piece: 
+? - 8
+  - 5
+: !ruby/object:Field
+  color: -1
+  piece: 
+? - 8
+  - 6
+: !ruby/object:Field
+  color: 1
+  piece: 
+? - 8
+  - 7
+: !ruby/object:Field
+  color: -1
+  piece: !ruby/object:Pawn
+    position:
+    - 8
+    - 7
+    walk:
+    - - 0
+      - -1
+    walk_first:
+    - - 0
+      - -1
+    - - 0
+      - -2
+    hit:
+    - - -1
+      - -1
+    - - 1
+      - -1
+    color: -1
+    jumps: false
+    moves: 0
+    symbol: "♟"
+    name: Pawn
+? - 8
+  - 8
+: !ruby/object:Field
+  color: 1
+  piece: !ruby/object:Rook
+    position:
+    - 8
+    - 8
+    walk: &14
+    - - 0
+      - 1
+    - - 0
+      - 2
+    - - 0
+      - 3
+    - - 0
+      - 4
+    - - 0
+      - 5
+    - - 0
+      - 6
+    - - 0
+      - 7
+    - - 0
+      - -1
+    - - 0
+      - -2
+    - - 0
+      - -3
+    - - 0
+      - -4
+    - - 0
+      - -5
+    - - 0
+      - -6
+    - - 0
+      - -7
+    - - 1
+      - 0
+    - - 2
+      - 0
+    - - 3
+      - 0
+    - - 4
+      - 0
+    - - 5
+      - 0
+    - - 6
+      - 0
+    - - 7
+      - 0
+    - - -1
+      - 0
+    - - -2
+      - 0
+    - - -3
+      - 0
+    - - -4
+      - 0
+    - - -5
+      - 0
+    - - -6
+      - 0
+    - - -7
+      - 0
+    hit: *14
+    jumps: false
+    color: -1
+    moves: 0
+    symbol: "♜"
+    name: Rook
