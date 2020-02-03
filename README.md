@@ -2,7 +2,7 @@
 A command-line based chess game with ruby, created as part of theodinproject ruby programming curriculum.
 Dependencies: colorize ~> 0.8.1
 
-#Features
+# Features
 Gameplay
 - Select number of players: human vs. human, human vs. AI, AI vs AI
 
